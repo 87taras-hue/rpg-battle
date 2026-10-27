@@ -1,0 +1,32 @@
+<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RPG Battle</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#111827;color:#f9fafb;font:16px Arial,sans-serif}
+main{max-width:900px;margin:30px auto;padding:18px}.title{text-align:center;color:#fbbf24}
+.arena{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0}
+.fighter,.panel{background:#1f2937;border:1px solid #374151;border-radius:16px;padding:22px}
+.avatar{font-size:70px;text-align:center;margin:10px}.name{text-align:center;font-size:22px;font-weight:bold}
+.bar{height:16px;background:#374151;border-radius:20px;overflow:hidden;margin:12px 0}
+.fill{height:100%;background:#22c55e}.monster .fill{background:#ef4444}
+.hp{text-align:center;color:#d1d5db}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+button,.restart{border:0;border-radius:9px;padding:13px 20px;font-size:16px;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-block}
+.sword{background:#fbbf24;color:#111827}.poison{background:#a78bfa;color:#111827}.restart{background:#22c55e;color:#052e16}
+button:disabled{opacity:.4;cursor:not-allowed}.status{text-align:center;color:#fbbf24;font-size:22px;font-weight:bold}
+ul{padding-left:22px}li{padding:7px 0;border-bottom:1px solid #374151;color:#d1d5db}
+@media(max-width:600px){.arena{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1 class="title">⚔️ RPG: Битва на арені</h1><p style="text-align:center;color:#9ca3af">Переможи монстра, використовуючи меч і отруту.</p>
+<div class="arena">
+<div class="fighter"><div class="avatar">🧙</div><div class="name">Герой</div><div class="bar"><div class="fill" style="width:{{ hero_hp }}%"></div></div><div class="hp">{{ hero_hp }} / {{ hero_max }} HP</div></div>
+<div class="fighter monster"><div class="avatar">👹</div><div class="name">Монстр</div><div class="bar"><div class="fill" style="width:{{ monster_hp }}%"></div></div><div class="hp">{{ monster_hp }} / {{ monster_max }} HP</div></div>
+</div>
+{% if finished %}<div class="status">{% if won %}🏆 Перемога!{% else %}💀 Поразка!{% endif %}</div>{% endif %}
+<div class="panel"><h2>Твій хід</h2>
+{% if finished %}<p style="text-align:center"><a class="restart" href="{% url 'restart' %}">Почати новий бій</a></p>
+{% else %}<form method="post" class="actions">{% csrf_token %}
+<button class="sword" name="action" value="sword">🗡️ Удар мечем</button>
+<button class="poison" name="action" value="poison" {% if poison_used %}disabled{% endif %}>☠️ Отрута {% if poison_used %}(використано){% endif %}</button>
+</form>{% endif %}
+</div>
+<div class="panel" style="margin-top:18px"><h2>📜 Журнал бою</h2><ul>{% for entry in log %}<li>{{ entry }}</li>{% empty %}<li>Бій ще не почався.</li>{% endfor %}</ul></div>
+</main></body></html>
